@@ -1,0 +1,42 @@
+global:
+  edition: "ce"
+  hosts:
+    domain: k3d.gitlab.com
+  ingress:
+    configureCertmanager: false
+    class: "nginx"
+  kas:
+    enabled: false
+  ails:
+    bootsnap:
+      enabled: false
+
+certmanager:
+  install: false
+
+certmanager-issuer:
+  email: "mbrettsc@42kocaeli.com.tr"
+
+shell:
+    port: 32022
+
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+  gitlab-shell:
+    minReplicas: 1
+    maxReplicas: 1
+    service:
+      type: NodePort
+      nodePort: 32022
+registry:
+  hpa:
+    minReplicas: 1
+    maxReplicas: 1
+
+gitlab-runner:
+  install: false

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-deployment
+  namespace: dev
+spec:
+  template:
+    metadata:
+      labels:
+        app: dev-app
+    spec:
+      containers:
+        - name: dev-app
+          image: wil42/playground:v1
+          ports:
+          - containerPort: 8888
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev-app

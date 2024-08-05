@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: development
+  namespace: argocd
+spec:
+  description: k3d with argocd!
+  sourceRepos:
+  - 'https://github.com/mbrettsc/k3d-argocd-manifests.mbrettsc.git'
+  destinations:
+    - namespace: dev
+      server: https://kubernetes.default.svc

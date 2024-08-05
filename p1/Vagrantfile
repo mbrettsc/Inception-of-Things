@@ -1,0 +1,51 @@
+Vagrant.configure(2) do |config|
+  config.vm.box = "bento/ubuntu-20.04-arm64"
+
+  def install_chrony(vm)
+    vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y chrony
+      sudo systemctl enable chrony
+      sudo systemctl start chrony
+      SHELL
+  end
+
+  def alias_kubectl(vm)
+    vm.provision "shell", inline: <<-SHELL
+      echo "alias k='kubectl'" >> /etc/profile.d/00-aliases.sh
+      SHELL
+  end
+
+  config.vm.define "mbrettscS" do |control|
+    control.vm.hostname = "mbrettscS"
+    control.vm.network "private_network", ip: "192.168.56.110"
+
+    control.vm.provider "vmware_desktop" do |v|
+      v.vmx["memsize"] = "512"
+      v.vmx["numvcpus"] = "1"
+    end
+
+    install_chrony(control.vm)
+    control.vm.provision "shell", inline: <<-SHELL
+      sudo ufw disable
+      curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" INSTALL_K3S_EXEC="server" sh -s - --token root123 --flannel-iface eth1
+      SHELL
+    alias_kubectl(control.vm)
+  end
+  config.vm.define "mbrettscSW" do |worker|
+    worker.vm.hostname = "mbrettscSW"
+    worker.vm.network "private_network", ip: "192.168.56.111"
+
+    worker.vm.provider "vmware_desktop" do |v|
+      v.vmx["memsize"] = "512"
+      v.vmx["numvcpus"] = "1"
+    end
+    
+    install_chrony(worker.vm)
+    worker.vm.provision "shell", inline: <<-SHELL
+      sudo ufw disable
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent" K3S_TOKEN="root123" sh -s - --server https://vagrant@192.168.56.110:6443 --flannel-iface eth1
+      SHELL
+    alias_kubectl(worker.vm)
+  end
+end

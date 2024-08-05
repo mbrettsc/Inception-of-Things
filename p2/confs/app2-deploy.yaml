@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-two-deployment
+  labels:
+    app: app-two
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-two
+  template:
+    metadata:
+      labels:
+        app: app-two
+    spec:
+      containers:
+      - name: app-two
+        image: belaboros/hello-kubernetes:1.10.1b
+        ports:
+        - containerPort: 80
+        env:
+          - name: PORT
+            value: "80"
+          - name: MESSAGE
+            value: "Hello from app2."
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-two-service
+spec:
+  selector:
+    app: app-two
+  ports:
+    - protocol: TCP
+      port: 80
+  

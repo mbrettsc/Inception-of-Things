@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-application
+  namespace: argocd
+spec:
+  project: gitlab-dev
+  source:
+    repoURL: 'http://gitlab-webservice-default.gitlab.svc:8181/root/mbrettsc.git'
+    targetRevision: HEAD
+    path: manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

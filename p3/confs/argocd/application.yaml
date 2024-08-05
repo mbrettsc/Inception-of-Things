@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-application
+  namespace: argocd
+spec:
+  project: development
+  source:
+    repoURL: 'https://github.com/mbrettsc/k3d-argocd-manifests.mbrettsc.git'
+    targetRevision: HEAD
+    path: manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: gitlab-dev
+  namespace: argocd
+spec:
+  description: Gitlab local ci with k3d
+  sourceRepos:
+  - 'http://gitlab-webservice-default.gitlab.svc:8181/root/mbrettsc.git'
+  destinations:
+    - namespace: dev
+      server: https://kubernetes.default.svc
